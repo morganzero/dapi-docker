@@ -1,6 +1,6 @@
-# Dockerized Linux-Apache-PHP Stack for Traefik Reverse Proxy
+# Dockerized Debian-Apache-PHP-IonCube Stack for Traefik Reverse Proxy
 
-This Docker container provides a pre-configured Debian Apache PHP Ioncube (DAPI) stack, allowing you to easily deploy web applications such as WHMCS or other similar platforms behind a Traefik reverse proxy. With Traefik, you can efficiently manage incoming requests and route them to the appropriate container.
+This Docker container provides a pre-configured Debian (bullseye), Apache2, PHP (8.1), and Ioncube (DAPI) stack, allowing you to easily deploy web applications such as WHMCS or other similar platforms behind a Traefik reverse proxy. With Traefik, you can efficiently manage incoming requests and route them to the appropriate container.
 
 ## Prerequisites
 
@@ -13,12 +13,12 @@ Before you begin, ensure that you have the following components installed:
 
 To deploy the DAPI stack container with Traefik, follow these steps:
 
-1. Create a `docker-compose.yml` file in your desired directory and copy the following content into it:
+1. Create a docker-compose.yml file in your desired directory and copy the following content into it. For example, let's use the name "WHMCS" for the container:
 
 ```yaml
 version: "3.9"
 services:
-  fossbilling:
+  whmcs:
     image: docker.io/sushibox/dapi:latest
     restart: always
     ports:
