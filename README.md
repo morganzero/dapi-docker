@@ -25,7 +25,9 @@ services:
       - 80:80
     volumes:
       - /opt/dapi:/var/www/html
-
+    labels:
+      - "traefik.enable=true"
+      
   mariadb:
     image: mariadb
     restart: always
