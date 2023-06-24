@@ -1,7 +1,6 @@
 FROM php:8.1-apache-bullseye
-LABEL version="0.0.1"
-LABEL maintainer="Morgan Zero"
-LABEL description="Dockerized WHMCS in LAMP"
+LABEL maintainer="morganzero@sushibox.dev"
+LABEL description="Dockerized WHMCS in LAMP with IonCube"
 
 # Install Dependencies
 RUN apt-get update && apt-get upgrade -y \
@@ -15,12 +14,15 @@ RUN chmod +x /usr/local/bin/start-apache \
     && a2enmod rewrite
 
 # Download WHMCS
-RUN set -eux \
-    && whmcs_release=$(curl -sX GET 'https://api1.whmcs.com/download/latest?type=stable' | jq -r '.version') \
-    && wget -P /tmp --user-agent="Mozilla" https://releases.whmcs.com/v2/pkgs/whmcs-${whmcs_release}-release.1.zip \
-    && unzip /tmp/whmcs-${whmcs_release}-release.1.zip -d /var/www/html/whmcs \
-    && rm /tmp/whmcs-${whmcs_release}-release.1.zip \
-    && chown -R www-data:www-data /var/www/html
+#RUN set -eux \
+#    && whmcs_release=$(curl -sX GET 'https://api1.whmcs.com/download/latest?type=stable' | jq -r '.version') \
+#    && wget -P /tmp --user-agent="Mozilla" https://releases.whmcs.com/v2/pkgs/whmcs-${whmcs_release}-release.1.zip \
+#    && unzip /tmp/whmcs-${whmcs_release}-release.1.zip -d /var/www/html/whmcs \
+#    && chown -R www-data:www-data /var/www/html
+
+ARG whmcs_release
+RUN whmcs_release=$(curl -sX GET 'https://api1.whmcs.com/download/latest?type=stable' | jq -r '.version')
+LABEL whmcs_version="${whmcs_release}"
 
 # Install PHP 8.1 Extensions
 RUN apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libgmp-dev libzip-dev libonig-dev libxml2-dev \
@@ -33,8 +35,7 @@ RUN wget -P /tmp https://downloads.ioncube.com/loader_downloads/ioncube_loaders_
     && loaded_conf=$(php -i | awk '/Loaded Configuration File/{print $5}') \
     && mkdir /usr/local/bin/ioncube \
     && cp /tmp/ioncube/ioncube_loader_lin_8.1.so /usr/local/bin/ioncube/ \
-    && echo "zend_extension=/usr/local/bin/ioncube/ioncube_loader_lin_8.1.so" >> /usr/local/etc/php/php.ini \
-    && rm -rf /tmp/ioncube*
+    && echo "zend_extension=/usr/local/bin/ioncube/ioncube_loader_lin_8.1.so" >> /usr/local/etc/php/php.ini
 
 # Clean up
 RUN apt-get autoclean -y \
