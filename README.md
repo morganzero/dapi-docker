@@ -9,7 +9,7 @@ Before you begin, ensure that you have the following components installed:
 - Docker: [Installation Guide](https://docs.docker.com/get-docker/)
 - Traefik: [Installation Guide](https://doc.traefik.io/traefik/)
 
-## Deployment
+## Deployment - docker-compose
 
 To deploy the DAPI stack container with Traefik, follow these steps:
 
@@ -55,6 +55,31 @@ docker-compose up -d
 
 ```bash
 docker-compose ps
+```
+
+## Deployment - Docker run
+
+1. Run the "whmcs" service:
+
+```bash
+docker run -d \
+  --name whmcs \
+  -p 80:80 \
+  -v /opt/dapi:/var/www/html \
+  docker.io/sushibox/dapi:latest
+```
+
+2. Run the "mariadb" service:
+
+```bash
+docker run -d \
+  --name mariadb \
+  -e MYSQL_DATABASE=whmcs \
+  -e MYSQL_USER=whmcs \
+  -e MYSQL_PASSWORD=whmcs \
+  -e MYSQL_RANDOM_ROOT_PASSWORD=whmcs \
+  -v /opt/dapi/db:/var/lib/mysql \
+  mariadb
 ```
 
 ## Configuration
