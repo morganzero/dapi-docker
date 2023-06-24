@@ -1,6 +1,6 @@
 FROM php:8.1-apache-bullseye
 LABEL maintainer="morganzero@sushibox.dev"
-LABEL description="Dockerized WHMCS in LAMP with IonCube"
+LABEL description="Dockerized LAMP WebServer with IonCube"
 
 # Install Dependencies
 RUN apt-get update && apt-get upgrade -y \
@@ -20,9 +20,9 @@ RUN chmod +x /usr/local/bin/start-apache \
 #    && unzip /tmp/whmcs-${whmcs_release}-release.1.zip -d /var/www/html/whmcs \
 #    && chown -R www-data:www-data /var/www/html
 
-ARG whmcs_release
-RUN whmcs_release=$(curl -sX GET 'https://api1.whmcs.com/download/latest?type=stable' | jq -r '.version')
-LABEL whmcs_version="${whmcs_release}"
+#ARG whmcs_release
+#RUN whmcs_release=$(curl -sX GET 'https://api1.whmcs.com/download/latest?type=stable' | jq -r '.version')
+#LABEL whmcs_version="${whmcs_release}"
 
 # Install PHP 8.1 Extensions
 RUN apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libgmp-dev libzip-dev libonig-dev libxml2-dev \
