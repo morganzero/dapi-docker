@@ -1,6 +1,6 @@
 # Dockerized Linux-Apache-PHP Stack for Traefik Reverse Proxy
 
-This Docker container provides a pre-configured Linux-Apache-PHP (LAMP) stack, allowing you to easily deploy web applications such as WHMCS or other similar platforms behind a Traefik reverse proxy. With Traefik, you can efficiently manage incoming requests and route them to the appropriate container.
+This Docker container provides a pre-configured Debian Apache PHP Ioncube (DAPI) stack, allowing you to easily deploy web applications such as WHMCS or other similar platforms behind a Traefik reverse proxy. With Traefik, you can efficiently manage incoming requests and route them to the appropriate container.
 
 ## Prerequisites
 
@@ -11,11 +11,11 @@ Before you begin, ensure that you have the following components installed:
 
 ## Deployment
 
-To deploy the LAMP stack container with Traefik, follow these steps:
+To deploy the DAPI stack container with Traefik, follow these steps:
 
 1. Create a `docker-compose.yml` file in your desired directory and copy the following content into it:
 
-\`\`\`yaml
+```yaml
 version: "3.9"
 services:
   fossbilling:
@@ -39,21 +39,21 @@ services:
 
 volumes:
   mysql:
-\`\`\`
+```
 
 2. Save the `docker-compose.yml` file.
 
 3. Open a terminal or command prompt, navigate to the directory where you saved the `docker-compose.yml` file, and run the following command:
 
-\`\`\`bash
+```bash
 docker-compose up -d
-\`\`\`
+```
 
 4. Wait for the container to start and verify that it's running without any errors by running:
 
-\`\`\`bash
+```bash
 docker-compose ps
-\`\`\`
+```
 
 ## Configuration
 
@@ -83,4 +83,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-We hope you find this Dockerized LAMP stack container helpful for deploying your web applications with ease. If you have any questions or feedback, please don't hesitate to reach out. Happy coding!
+We hope you find this Dockerized DAPI stack container helpful for deploying your web applications with ease. If you have any questions or feedback, please don't hesitate to reach out. Happy coding!
