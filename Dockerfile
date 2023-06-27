@@ -6,7 +6,7 @@ LABEL name="DAPI"
 # Install Dependencies
 RUN apt-get update && apt-get upgrade -y \
     && curl -sSL https://packages.sury.org/php/README.txt | bash -x \
-    && apt-get install -y --no-install-recommends wget unzip zlib1g-dev libpng-dev libicu-dev ca-certificates apt-transport-https software-properties-common wget curl jq lsb-release gettext-base
+    && apt-get install -y --no-install-recommends unzip zlib1g-dev libpng-dev libicu-dev ca-certificates apt-transport-https software-properties-common wget curl jq nano lsb-release gettext-base
 
 # Configure Apache
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
@@ -27,8 +27,15 @@ RUN chmod +x /usr/local/bin/start-apache \
 
 # Install PHP 8.1 Extensions
 RUN apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libgmp-dev libzip-dev libonig-dev libxml2-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd gmp bcmath intl zip pdo_mysql soap
+    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --prefix=/usr \
+    && docker-php-ext-install -j$(nproc) gd gmp bcmath intl zip pdo_mysql mysqli soap calendar opcache
+
+# Configure opcache
+COPY opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+
+# Configure memcached
+RUN pecl install memcached
+RUN echo extension=memcached.so >> /usr/local/etc/php/conf.d/memcached.ini
 
 # Install IonCube Loader
 RUN wget -P /tmp https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
