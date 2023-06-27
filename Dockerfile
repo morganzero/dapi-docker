@@ -1,4 +1,4 @@
-FROM php:8.1-apache-bullseye
+FROM php:8.1-apache-bullseye                                                                                          
 LABEL maintainer="morganzero@sushibox.dev"
 LABEL description="Dockerized Debian-Apache-PHP-IonCube WebServer"
 LABEL name="DAPI"
@@ -27,15 +27,11 @@ RUN chmod +x /usr/local/bin/start-apache \
 
 # Install PHP 8.1 Extensions
 RUN apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libgmp-dev libzip-dev libonig-dev libxml2-dev \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --prefix=/usr \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd gmp bcmath intl zip pdo_mysql mysqli soap calendar opcache
 
 # Configure opcache
 COPY opcache.ini /usr/local/etc/php/conf.d/opcache.ini
-
-# Configure memcached
-RUN pecl install memcached
-RUN echo extension=memcached.so >> /usr/local/etc/php/conf.d/memcached.ini
 
 # Install IonCube Loader
 RUN wget -P /tmp https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
@@ -45,7 +41,7 @@ RUN wget -P /tmp https://downloads.ioncube.com/loader_downloads/ioncube_loaders_
     && cp /tmp/ioncube/ioncube_loader_lin_8.1.so /usr/local/bin/ioncube/ \
     && echo "zend_extension=/usr/local/bin/ioncube/ioncube_loader_lin_8.1.so" >> /usr/local/etc/php/php.ini
 
-# Clean up
+# Clear out trash
 RUN apt-get autoclean -y \
     && apt-get autoremove --purge -y \
     && rm -rf /var/lib/apt/lists/* \
