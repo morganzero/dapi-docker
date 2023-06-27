@@ -1,6 +1,7 @@
 FROM php:8.1-apache-bullseye
 LABEL maintainer="morganzero@sushibox.dev"
-LABEL description="Dockerized LAMP WebServer with IonCube"
+LABEL description="Dockerized Debian-Apache-PHP-IonCube WebServer"
+LABEL name="DAPI"
 
 # Install Dependencies
 RUN apt-get update && apt-get upgrade -y \
