@@ -10,9 +10,11 @@ RUN apt-get update && apt-get upgrade -y \
 
 # Configure Apache
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY apache2.conf /etc/apache2/apache2.conf
 COPY start-apache /usr/local/bin
 RUN chmod +x /usr/local/bin/start-apache \
-    && a2enmod rewrite
+    && a2enmod rewrite \
+    && a2enmod ssl
 
 # Download WHMCS
 #RUN set -eux \
@@ -26,9 +28,10 @@ RUN chmod +x /usr/local/bin/start-apache \
 #LABEL whmcs_version="${whmcs_release}"
 
 # Install PHP 8.1 Extensions
-RUN apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libgmp-dev libzip-dev libonig-dev libxml2-dev \
+RUN apt-get update && apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libgmp-dev libzip-dev libonig-dev libxml2-dev libcurl4-openssl-dev libicu-dev curl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd gmp bcmath intl zip pdo_mysql mysqli soap calendar opcache
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install -j$(nproc) gd gmp bcmath intl zip pdo_mysql mysqli soap calendar opcache curl iconv mbstring exif xml json
 
 # Configure opcache
 COPY opcache.ini /usr/local/etc/php/conf.d/opcache.ini
