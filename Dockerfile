@@ -31,7 +31,7 @@ RUN chmod +x /usr/local/bin/start-apache \
 RUN apt-get update && apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libgmp-dev libzip-dev libonig-dev libxml2-dev libcurl4-openssl-dev libicu-dev libssl-dev curl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-configure intl \
-    && docker-php-ext-install -j$(nproc) gd gmp bcmath intl zip pdo_mysql mysqli soap calendar opcache curl iconv mbstring exif xml json
+    && docker-php-ext-install -j$(nproc) gd gmp bcmath intl zip pdo_mysql mysqli soap calendar opcache curl iconv mbstring exif xml
 
 # Configure opcache
 COPY opcache.ini /usr/local/etc/php/conf.d/opcache.ini
