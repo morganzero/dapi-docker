@@ -13,6 +13,7 @@ COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
 COPY apache2.conf /etc/apache2/apache2.conf
 COPY start-apache /usr/local/bin
 RUN mkdir -p /etc/webserver
+RUN mkdir -p /var/log/webserver
 RUN chmod +x /usr/local/bin/start-apache \
     && a2enmod rewrite \
     && a2enmod ssl
