@@ -1,22 +1,30 @@
-FROM php:8.2.24-apache-bookworm                                                                                          
+FROM php:8.2-apache-bookworm                                                                                  
 LABEL maintainer="morganzero@sushibox.dev"
 LABEL description="Dockerized Debian-Apache-PHP-IonCube WebServer"
 LABEL name="DAPI"
 
+# Add missing GPG keys and update the system
+RUN apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+    && apt-get update --allow-unauthenticated \
+    && apt-get install -y --allow-unauthenticated --no-install-recommends curl gnupg2 dirmngr \
+    && if [ ! -f /usr/share/keyrings/debian-archive-keyring.gpg ]; then \
+        curl -fsSL https://ftp-master.debian.org/keys/archive-key-12.asc | gpg --batch --dearmor -o /usr/share/keyrings/debian-archive-keyring.gpg; \
+    fi \
+    && apt-get update --allow-unauthenticated \
+    && apt-get upgrade -y --allow-unauthenticated
+
 # Install Dependencies
-RUN apt-get update && apt-get upgrade -y \
-    && curl -sSL https://packages.sury.org/php/README.txt | bash -x \
+RUN curl -sSL https://packages.sury.org/php/README.txt | bash -x \
     && apt-get install -y --no-install-recommends unzip zlib1g-dev libpng-dev libicu-dev ca-certificates apt-transport-https software-properties-common wget curl jq nano lsb-release gettext-base
 
 # Configure Apache
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
 COPY apache2.conf /etc/apache2/apache2.conf
 COPY start-apache /usr/local/bin
-RUN mkdir -p /etc/webserver
-RUN mkdir -p /var/log/webserver
-RUN chmod +x /usr/local/bin/start-apache \
-    && a2enmod rewrite \
-    && a2enmod ssl
+RUN mkdir -p /etc/webserver /var/log/webserver \
+    && chmod +x /usr/local/bin/start-apache \
+    && a2enmod rewrite ssl
 
 # Download WHMCS
 #RUN set -eux \
@@ -30,7 +38,7 @@ RUN chmod +x /usr/local/bin/start-apache \
 #LABEL whmcs_version="${whmcs_release}"
 
 # Install PHP 8.2 Extensions
-RUN apt-get update && apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libgmp-dev libzip-dev libonig-dev libxml2-dev libcurl4-openssl-dev libicu-dev libssl-dev curl \
+RUN apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libgmp-dev libzip-dev libonig-dev libxml2-dev libcurl4-openssl-dev libicu-dev libssl-dev curl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-configure intl \
     && docker-php-ext-install -j$(nproc) gd gmp bcmath intl zip pdo_mysql mysqli soap calendar opcache curl iconv mbstring exif xml
@@ -41,15 +49,12 @@ COPY opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 # Install IonCube Loader
 RUN wget -P /tmp https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
     && tar -zxvf /tmp/ioncube_loaders_lin_x86-64.tar.gz -C /tmp \
-    && loaded_conf=$(php -i | awk '/Loaded Configuration File/{print $5}') \
     && mkdir /usr/local/bin/ioncube \
     && cp /tmp/ioncube/ioncube_loader_lin_8.2.so /usr/local/bin/ioncube/ \
     && echo "zend_extension=/usr/local/bin/ioncube/ioncube_loader_lin_8.2.so" >> /usr/local/etc/php/php.ini
 
-# Clear out trash
-RUN apt-get autoclean -y \
-    && apt-get autoremove --purge -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /tmp/*
+# Clean up unnecessary files
+RUN apt-get autoclean -y && apt-get autoremove --purge -y \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
 
 CMD ["start-apache"]
