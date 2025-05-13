@@ -29,7 +29,7 @@ RUN chmod +x /usr/local/bin/start-apache \
 #RUN whmcs_release=$(curl -sX GET 'https://api1.whmcs.com/download/latest?type=stable' | jq -r '.version')
 #LABEL whmcs_version="${whmcs_release}"
 
-# Install PHP 8.1 Extensions
+# Install PHP 8.3 Extensions
 RUN apt-get update && apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libgmp-dev libzip-dev libonig-dev libxml2-dev libcurl4-openssl-dev libicu-dev libssl-dev curl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-configure intl \
@@ -40,8 +40,8 @@ RUN wget -P /tmp https://downloads.ioncube.com/loader_downloads/ioncube_loaders_
     && tar -zxvf /tmp/ioncube_loaders_lin_x86-64.tar.gz -C /tmp \
     && loaded_conf=$(php -i | awk '/Loaded Configuration File/{print $5}') \
     && mkdir /usr/local/bin/ioncube \
-    && cp /tmp/ioncube/ioncube_loader_lin_8.1.so /usr/local/bin/ioncube/ \
-    && echo "zend_extension=/usr/local/bin/ioncube/ioncube_loader_lin_8.1.so" >> /usr/local/etc/php/php.ini
+    && cp /tmp/ioncube/ioncube_loader_lin_8.3.so /usr/local/bin/ioncube/ \
+    && echo "zend_extension=/usr/local/bin/ioncube/ioncube_loader_lin_8.3.so" >> /usr/local/etc/php/php.ini
 
 # Clear out trash
 RUN apt-get autoclean -y \
