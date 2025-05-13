@@ -1,4 +1,4 @@
-FROM php:8.1.27-apache-bookworm
+FROM php:8.3-apache-bookworm
 LABEL maintainer="morganzero@sushibox.dev"
 LABEL description="Dockerized Debian-Apache-PHP-IonCube WebServer"
 LABEL name="DAPI"
